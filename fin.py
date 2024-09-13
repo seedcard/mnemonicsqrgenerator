@@ -1,5 +1,6 @@
 from bip_utils import Bip39SeedGenerator, Bip32Slip10Secp256k1
 import hashlib
+from Crypto.Hash import SHA256, RIPEMD160
 
 # Example BIP-39 seed phrase
 seed_phrase = "ice focus breeze input clinic grief rapid firm picnic broken amount above"
@@ -12,8 +13,12 @@ bip32_ctx = Bip32Slip10Secp256k1.FromSeed(seed)
 master_public_key = bip32_ctx.PublicKey().RawCompressed().ToBytes()
 
 # Hash the master public key with SHA-256 and then RIPEMD-160
-sha256_hash = hashlib.sha256(master_public_key).digest()
-ripemd160_hash = hashlib.new('ripemd160', sha256_hash).digest()
+# sha256_hash = hashlib.sha256(master_public_key).digest()
+# ripemd160_hash = hashlib.new('ripemd160', sha256_hash).digest()
+# Hash the master public key with SHA-256
+sha256_hash = SHA256.new(master_public_key).digest()
+# Hash the SHA-256 result with RIPEMD-160
+ripemd160_hash = RIPEMD160.new(sha256_hash).digest()
 
 # Take the first 4 bytes of the RIPEMD-160 hash
 fingerprint = ripemd160_hash[:4]
